@@ -2,6 +2,7 @@ const db = require("../models/queries");
 const pw = require("../passwordUtils/pw-encrypt");
 const { body, validationResult } = require("express-validator");
 const { validateUser } = require("../utils/input-validation");
+const fs = require("fs");
 
 exports.signUpPost = [
   validateUser,
@@ -37,7 +38,6 @@ exports.getIndexPage = async (req, res) => {
 };
 
 exports.getDirectory = async (req, res) => {
-
   const contents = await db.getContentsByID(req.params.id);
   contents.children = await db.getContentChildren(req.params.id);
   contents.type == "FILE" ? null : (contents.title += "/");
@@ -56,11 +56,54 @@ exports.getDirectory = async (req, res) => {
 };
 
 exports.addFileGet = async (req, res) => {
-  res.render("add-file");
+  res.render("add-file", { id: req.params.id });
+};
+
+exports.fileDownloadGet = async (req, res) => {
+  console.log(req.params.id);
+
+  const contents = await db.getContentsByID(req.params.id);
+  const path = `uploads/${contents.title}`;
+
+  res.download(path);
+};
+
+exports.fileDeleteGet = async (req, res) => {
+  console.log(req.params.id);
+
+  const contents = await db.getContentsByID(req.params.id);
+
+  const deleted = await db.deleteFile(req.params.id)
+console.log(deleted);
+
+  res.redirect(`/navigate/${contents.parentID}`)
+};
+
+exports.fileGet = async (req, res) => {
+  const contents = await db.getContentsByID(req.params.id);
+  const path = `uploads/${contents.title}`;
+
+  fs.readFile(path, (err, data) => {
+    if (err) throw err;
+    console.log(data);
+  });
+
+  res.render("file-info", {
+    user: req.user,
+    id: req.params.id,
+    contents: contents,
+  });
 };
 
 exports.addFilePost = async (req, res) => {
-  res.redirect("/");
+  console.log(req.file, req.body);
+  const result = db.addFile(
+    req.params.id,
+    req.file.originalname,
+    req.file.path
+  );
+
+  res.redirect(`/navigate/${req.params.id}`);
 };
 
 exports.addFolderGet = async (req, res) => {
@@ -82,7 +125,6 @@ exports.deleteFolderPost = async (req, res) => {
   const { id } = req.body;
 
   const result = await db.deleteFolder(id);
-
 
   res.send({
     message: "recieved",

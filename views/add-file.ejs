@@ -9,10 +9,9 @@
 
 <body>
 
-    <form action="/add-file" method="POST">
+    <form action=<%=`/add-file/${id}`%> method="post" enctype="multipart/form-data">
         <input type="file" id="newFile" name="newFile">
         <br>
-        <input type="text" name="filename" placeholder="filename">
         <input type="submit">
     </form>
 

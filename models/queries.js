@@ -74,8 +74,7 @@ exports.getContentChildren = async (contentsID) => {
   return contents;
 };
 
-exports.addFolder = async (contentsID, name, user) => {
-
+exports.addFolder = async (contentsID, name) => {
   const parent = await prisma.contents.update({
     where: {
       id: contentsID,
@@ -93,11 +92,40 @@ exports.addFolder = async (contentsID, name, user) => {
   return parent;
 };
 
+exports.addFile = async (contentsID, name, path) => {
+  const parent = await prisma.contents.update({
+    where: {
+      id: Number(contentsID),
+    },
+    data: {
+      children: {
+        create: {
+          title: name,
+          url: path,
+          type: "FILE",
+        },
+      },
+    },
+  });
+
+  return parent;
+};
+
+exports.deleteFile = async (contentsID) => {
+  const deleted = await prisma.contents.delete({
+    where: {
+      id: Number(contentsID),
+    },
+  });
+
+  return deleted;
+};
+
 exports.deleteFolder = async (contentsID) => {
   const folder = await prisma.contents.delete({
     where: {
       id: contentsID,
-    }
+    },
   });
 
   return folder;

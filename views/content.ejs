@@ -21,11 +21,19 @@
                 <% contents.children.forEach(child=> { %>
 
 
-                    <li> <a href=<%=`/navigate/${child.id}`%>>
-                            <%= child.title %>
+                    <li>
+                        <% if (child.type == "DIRECTORY") { %>
+                            <a href=<%=`/navigate/${child.id}`%>>
+                                <%= child.title %>
+                            </a>
+                            <% } else {%>
+                                <a href=<%=`/file/${child.id}`%>>
+                                    <%= child.title %>
+                                </a>
+                                <%}%>
+
                     </li>
 
-                    </a>
                     </li>
 
                     <% }); %>
@@ -39,7 +47,7 @@
                             <br>
 
 
-                            <button><a href="/add-file"> add file</a></button>
+                            <button><a href=<%=`/add-file/${contents.id}`%>> add file</a></button>
 
                             <button id="addFolder"> add a folder</button>
                             <% if (contents.parentID) { %>
