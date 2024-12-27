@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>
+        <%= contents.title %>
+    </title>
+</head>
+
+<body>
+    <% if (locals.user) { %>
+        <h2>
+            <%= contents.title%> directory
+        </h2>
+        <% if (contents.children.length==0) { %>
+            <p>this directory is empty</p>
+            <% } else {%>
+                <% contents.children.forEach(child=> { %>
+
+
+                <li> <a href=<%=`${url}/${child.title}`%>>
+                        <%= child.title %>
+                </li>
+
+                </a>
+                </li>
+
+                <% }); %>
+
+                    <% }%>
+
+ 
+
+                        <br>
+                        <br>
+                        <br>
+
+                        <a href="/">
+                            home
+                        </a>
+
+                        <button><a href="/add-file"> add file</a></button>
+
+                        <button id="addFolder"> add a folder</button>
+
+                        <br>
+                        <a href="/sign-out">sign out</a>
+
+                        <%} else { %>
+                            <p>you are not signed in.</p>
+                            <a href="/sign-in">sign in</a>
+                            <a href="/sign-up">create an account</a>
+                            <% } %>
+
+
+</body>
+<script>
+    console.log("window", window.location.href);
+
+
+    document.querySelector("#addFolder").addEventListener("click", async () => {
+        {
+            const folderName = prompt("Please enter your folder name:");
+
+            if (folderName !== null && folderName.trim() !== "") {
+                try {
+                    const response = await fetch('/add-folder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name: folderName }),
+                    });
+
+                    const data = await response.json();
+
+                    console.log("message", data.message);
+                    // location.reload()
+                } catch (error) {
+                    console.error('Error submitting prompt:', error);
+                }
+            } else {
+                alert('No input provided.');
+            }
+        }
+    })
+
+</script>
+
+</html>

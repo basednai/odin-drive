@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Sign Up</title>
+</head>
+
+<body>
+    <% if (locals.errors) { %>
+        <%- include('partials/errors', locals.errors) %>
+            <% }%>
+                <form action="/sign-up" method="POST">
+                    <div class="signUpField">
+                        <label for="username">username: </label>
+                        <input type="text" name="username">
+                    </div>
+
+                    <div class="signUpField">
+                        <label for="password">password: </label>
+                        <input type="text" name="password">
+                    </div>
+                    <button type="submit"> submit</button>
+                </form>
+<a href="/">home</a>
+<a href="/sign-in">sign in</a>
+</body>
+
+</html>

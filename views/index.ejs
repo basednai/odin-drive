@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Home</title>
+</head>
+
+<body>
+    <% if (locals.user) { %>
+        You're signed in
+        <br>
+
+        <a href="/navigate?path=/home">
+            <%= contents.title %>
+        </a>
+
+        <br>
+        <a href="/sign-out">sign out</a>
+
+        <%} else { %>
+            <p>you are not signed in.</p>
+            <a href="/sign-in">sign in</a>
+            <a href="/sign-up">create an account</a>
+            <% } %>
+
+
+</body>
+
+</html>

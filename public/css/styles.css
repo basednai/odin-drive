@@ -1,0 +1,11 @@
+.errors {
+    color: red;
+}
+
+button a:visited {
+color: black;
+}
+
+button a {
+text-decoration-line: none;
+}

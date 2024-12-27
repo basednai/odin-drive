@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "contents" ALTER COLUMN "type" SET DEFAULT 'DIRECTORY';
