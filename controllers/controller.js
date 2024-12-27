@@ -32,56 +32,32 @@ exports.getIndexPage = async (req, res) => {
   const contents = await db.getUserContentsByID(req.user.id);
 
   contents.type == "FILE" ? null : (contents.title += "/");
-  req.user.contents = contents;
-  req.session.contents = contents;
 
-  res.render("index", { user: req.user, contents: req.session.contents });
+  res.render("index", { user: req.user, contents: contents });
 };
 
 exports.getDirectory = async (req, res) => {
-  const dir = req.query.path.split("/").pop();
 
-  // contents.type == "FILE" ? null : (contents.title += "/");
+  const contents = await db.getContentsByID(req.params.id);
+  contents.children = await db.getContentChildren(req.params.id);
+  contents.type == "FILE" ? null : (contents.title += "/");
 
-  if (dir == "home") {
-    const contents = await db.getUserContentsByID(req.user.id);
-    req.session.contents = contents;
-    req.session.contents.children = await db.getContentChildren(
-      req.session.contents.id
-    );
+  contents.children.forEach((child) => {
+    child.type == "FILE" ? null : (child.title += "/");
+  });
 
-    res.render("content", {
-      user: req.user,
-      contents: req.session.contents,
-      url: req.url,
-    });
-  } else {
-    const contents = req.session.contents.children.filter(
-      (child) => (child.title == dir)
-    )[0];
-    console.log("contents", contents);
-    console.log("contentsid" ,contents?.id);
+  req.session.contents = contents;
 
-    req.session.contents = contents;
-    if (contents)
-    req.session.contents.children = await db.getContentChildren(contents?.id);
-
-
-
-
-    res.render("content", {
-      user: req.user,
-      contents: req.session.contents,
-      url: req.url,
-    });
-  }
+  res.render("content", {
+    user: req.user,
+    contents: contents,
+  });
+  // }
 };
-
-exports.getChildContent = async (req, res) => {};
 
 exports.addFileGet = async (req, res) => {
   res.render("add-file");
-}; 
+};
 
 exports.addFilePost = async (req, res) => {
   res.redirect("/");
@@ -93,9 +69,23 @@ exports.addFolderGet = async (req, res) => {
 
 exports.addFolderPost = async (req, res) => {
   const { name } = req.body;
-  const { contents } = req.session;
+  const contents = await db.getContentsByID(Number(req.params.id));
+
   const result = await db.addFolder(contents.id, name, req.user);
 
-  console.log(result);
-  res.location(req.get("Referrer"));
+  res.send({ message: "recieved" });
+
+  // res.location(req.get("Referrer"));
+};
+
+exports.deleteFolderPost = async (req, res) => {
+  const { id } = req.body;
+
+  const result = await db.deleteFolder(id);
+
+
+  res.send({
+    message: "recieved",
+    parentID: result.parentID,
+  });
 };

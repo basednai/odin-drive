@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, ContentType } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 exports.addUserToDB = async (user) => {
@@ -24,7 +24,6 @@ exports.getUserByUsername = async (username) => {
       username: username,
     },
   });
-  console.log(user);
 
   return user;
 };
@@ -32,7 +31,7 @@ exports.getUserByUsername = async (username) => {
 exports.getUserByID = async (id) => {
   const user = await prisma.users.findUnique({
     where: {
-      id: id,
+      id: Number(id),
     },
   });
   return user;
@@ -41,7 +40,7 @@ exports.getUserByID = async (id) => {
 exports.getUserContentsByID = async (id) => {
   const { contentsID } = await prisma.users.findUnique({
     where: {
-      id: id,
+      id: Number(id),
     },
     select: { contentsID: true },
   });
@@ -55,10 +54,20 @@ exports.getUserContentsByID = async (id) => {
   return contents;
 };
 
+exports.getContentsByID = async (contentsID) => {
+  const contents = await prisma.contents.findUnique({
+    where: {
+      id: Number(contentsID),
+    },
+  });
+
+  return contents;
+};
+
 exports.getContentChildren = async (contentsID) => {
   const contents = await prisma.contents.findMany({
     where: {
-      parentID: contentsID,
+      parentID: Number(contentsID),
     },
   });
 
@@ -66,21 +75,10 @@ exports.getContentChildren = async (contentsID) => {
 };
 
 exports.addFolder = async (contentsID, name, user) => {
-  const current = await prisma.contents.findUnique({
-    where: {
-      id: contentsID,
-    },
-  });
-
-  current.parentID =
-    current.parentID == null ? user.contentsID : current.parentID;
-
-  console.log(current.parentID);
-  
 
   const parent = await prisma.contents.update({
     where: {
-      id: current.parentID,
+      id: contentsID,
     },
     data: {
       children: {
@@ -93,6 +91,16 @@ exports.addFolder = async (contentsID, name, user) => {
   });
 
   return parent;
+};
+
+exports.deleteFolder = async (contentsID) => {
+  const folder = await prisma.contents.delete({
+    where: {
+      id: contentsID,
+    }
+  });
+
+  return folder;
 };
 
 async () => {

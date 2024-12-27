@@ -11,6 +11,7 @@ router.get("/sign-up", (req, res) => res.render("sign-up"));
 router.get("/sign-in", (req, res) => res.render("sign-in"));
 router.get("/sign-out", controller.logout);
 router.get("/navigate", controller.getDirectory)
+router.get("/navigate/:id", controller.getDirectory)
 
 router.get("/add-file", controller.addFileGet)
 router.get("/add-folder", controller.addFolderGet)
@@ -26,7 +27,7 @@ router.post(
     })
 );
 router.post("/add-file", controller.addFilePost)
-router.post("/add-folder", controller.addFolderPost)
+router.post("/add-folder/:id", controller.addFolderPost)
+router.post("/delete/:id", controller.deleteFolderPost)
 
 module.exports = router;
- 

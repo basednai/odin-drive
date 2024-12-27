@@ -36,8 +36,8 @@ model Contents {
   title     String
   url       String?
   createdAt DateTime    @default(now())
-  parentID  Int?        
-  parent    Contents?   @relation("ContentToContent", fields: [parentID], references: [id])
+  parentID  Int?
+  parent    Contents?   @relation("ContentToContent", fields: [parentID], references: [id], onDelete: Cascade)
   children  Contents[]  @relation("ContentToContent")
   type      ContentType @default(DIRECTORY)
 
